@@ -67,7 +67,7 @@ final class TestLambdaUtilities {
                 2, Set.of("zx", "cv"),
                 1, Set.of("o")
             ),
-            LambdaUtilities.group(List.of("abc", "qwe", "zx", "o", "cv"), x -> x.length())
+            LambdaUtilities.group(List.of("abc", "qwe", "zx", "o", "cv"), String::length)
         );
     }
 
@@ -88,9 +88,9 @@ final class TestLambdaUtilities {
             () -> random.nextInt(10) - 10
         );
         assertEquals(map.keySet(), Set.of("p1", "p2", "p3", "n1", "n2"));
-        assertEquals(map.get("p1").intValue(), 1);
-        assertEquals(map.get("p2").intValue(), 2);
-        assertEquals(map.get("p3").intValue(), 3);
+        assertEquals(map.get("p1"), 1);
+        assertEquals(map.get("p2"), 2);
+        assertEquals(map.get("p3"), 3);
         assertTrue(map.get("n1") < 0);
         assertTrue(map.get("n2") < 0);
     }
