@@ -1,15 +1,16 @@
 package it.unibo.mvc;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  */
 public final class DrawNumberApp implements DrawNumberViewObserver {
-    private static final int MIN = 0;
-    private static final int MAX = 100;
-    private static final int ATTEMPTS = 10;
+    private static final String CONFIG_FILE = "config.yml";
 
     private final DrawNumber model;
     private final List<DrawNumberView> views;
@@ -27,7 +28,8 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
             view.setObserver(this);
             view.start();
         }
-        this.model = new DrawNumberImpl(MIN, MAX, ATTEMPTS);
+        final Configuration config = loadFromFile(CONFIG_FILE);
+        this.model = new DrawNumberImpl(config.getMin(), config.getMax(), config.getAttempts());
     }
 
     @Override
@@ -69,4 +71,29 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
         new DrawNumberApp(new DrawNumberViewImpl());
     }
 
+    private Configuration loadFromFile(final String filePath) {
+        Configuration.Builder configBuilder = new Configuration.Builder();
+        try (
+            final BufferedReader in = new BufferedReader(
+                                          new InputStreamReader(ClassLoader.getSystemResourceAsStream(filePath))) 
+        ) {
+            configBuilder.setMin(Integer.parseInt(new StringTokenizer(in.readLine(), "minimum: ").nextToken()));
+            configBuilder.setMax(Integer.parseInt(new StringTokenizer(in.readLine(), "maximum: ").nextToken()));
+            configBuilder.setAttempts(Integer.parseInt(new StringTokenizer(in.readLine(), "attempts: ").nextToken()));
+        } catch (Exception e) {
+            configBuilder = new Configuration.Builder();
+            for (final DrawNumberView view: views) {
+                view.displayError("Error reading config file, using default values. " + e);
+            }
+        }
+        final Configuration config = configBuilder.build();
+        if (config.isConsistent()) {
+            return config;
+        } else {
+            for (final DrawNumberView view: views) {
+                view.displayError("The configurations read from the file are invalid, using default values.");
+            }
+            return new Configuration.Builder().build();
+        }
+    }
 }
