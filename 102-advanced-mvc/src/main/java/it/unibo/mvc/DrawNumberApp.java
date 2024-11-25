@@ -3,6 +3,7 @@ package it.unibo.mvc;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -10,7 +11,8 @@ import java.util.StringTokenizer;
 /**
  */
 public final class DrawNumberApp implements DrawNumberViewObserver {
-    private static final String CONFIG_FILE = "config.yml";
+    private static final String CONFIG_FILE = "cofig.yml";
+    private static final String LOG_FILE = "log.txt";
 
     private final DrawNumber model;
     private final List<DrawNumberView> views;
@@ -68,7 +70,7 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
      * @throws FileNotFoundException 
      */
     public static void main(final String... args) throws FileNotFoundException {
-        new DrawNumberApp(new DrawNumberViewImpl());
+        new DrawNumberApp(new DrawNumberViewImpl(), new DrawNumberViewImpl(), new PrintStreamView(System.out), new PrintStreamView(new PrintStream(LOG_FILE)));
     }
 
     private Configuration loadFromFile(final String filePath) {
