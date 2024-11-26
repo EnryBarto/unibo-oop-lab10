@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 /**
  */
 public final class DrawNumberApp implements DrawNumberViewObserver {
-    private static final String CONFIG_FILE = "cofig.yml";
+    private static final String CONFIG_FILE = "config.yml";
     private static final String LOG_FILE = "log.txt";
 
     private final DrawNumber model;
